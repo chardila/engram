@@ -1,0 +1,25 @@
+# Skill: Plan del día (/daily-prep)
+
+## Qué leer primero
+1. `STATE.md` — mostrar el bloque `## Hechos duros` al usuario ANTES de generar nada
+   - Si está vacío o sin editar en más de 3 días, señalarlo como primer punto
+2. `Context/metas-anuales.md` y `Context/metas-trimestrales.md`
+3. Último log en `AI/sessions/` (ordenado por fecha)
+4. `Inbox/YYYY-MM-DD.md` de hoy si existe
+
+## Qué hacer
+- Crear `Inbox/YYYY-MM-DD.md` desde `Templates/daily.md` si no existe
+- Generar borrador de `## Prioridades del día` (3–5 puntos) derivado de:
+  - Tareas con 📅 de hoy o vencidas en `Projects/`
+  - `STATE.md ## Próximas prioridades`
+  - Metas activas en `Context/`
+  - `## Hechos duros` como restricción prioritaria sobre todo lo anterior
+- Presentar borrador y preguntar: "¿Ajusto algo?"
+
+## Qué actualizar
+- `## Prioridades del día` en la nota diaria (tras aprobación del usuario)
+
+## Notas
+- No generar nada antes de mostrar `## Hechos duros`
+- Si `## Hechos duros` tiene más de 3 días sin editar, avisar antes de continuar
+- Las prioridades de desarrollo van en `Projects/dev/` — no en la nota diaria directamente
