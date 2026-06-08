@@ -126,19 +126,10 @@ for a in data.get('assets', []):
   echo "  ✓ $plugin_id"
 }
 
-register_vault() {
-  local vault_path
-  vault_path="$(realpath "$1")"
-  local obsidian_config
-
-  if [[ "$OSTYPE" == "darwin"* ]]; then
-    obsidian_config="$HOME/Library/Application Support/obsidian/obsidian.json"
-  else
-    obsidian_config="${XDG_CONFIG_HOME:-$HOME/.config}/obsidian/obsidian.json"
-  fi
-
+_register_vault_config() {
+  local obsidian_config="$1"
+  local vault_path="$2"
   mkdir -p "$(dirname "$obsidian_config")"
-
   python3 - "$obsidian_config" "$vault_path" <<'PYEOF'
 import sys, json, secrets, time, os
 
@@ -169,6 +160,22 @@ with open(config_path, "w") as f:
 
 print(f"  ✓ Vault registrado en: {config_path}")
 PYEOF
+}
+
+register_vault() {
+  local vault_path
+  vault_path="$(realpath "$1")"
+
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    _register_vault_config "$HOME/Library/Application Support/obsidian/obsidian.json" "$vault_path"
+  else
+    # Register in both standard XDG path and snap sandbox path
+    _register_vault_config "${XDG_CONFIG_HOME:-$HOME/.config}/obsidian/obsidian.json" "$vault_path"
+    local snap_config="$HOME/snap/obsidian/current/.config/obsidian/obsidian.json"
+    if [[ -d "$HOME/snap/obsidian" ]]; then
+      _register_vault_config "$snap_config" "$vault_path"
+    fi
+  fi
 }
 
 # ── main ──────────────────────────────────────────────────────────────────────
