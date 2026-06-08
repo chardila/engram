@@ -1,3 +1,8 @@
+---
+name: daily-prep
+description: Use when starting the day, running /daily-prep, or asked to plan the day. Reads STATE.md, shows Hechos duros block first, creates daily note in Inbox/, drafts 3-5 priorities from projects and goals.
+---
+
 # Skill: Plan del día (/daily-prep)
 
 ## Qué leer primero

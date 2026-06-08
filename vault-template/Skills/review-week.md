@@ -1,3 +1,8 @@
+---
+name: review-week
+description: Use when running /review-week or asked to review the week. Reads all daily notes and session logs, generates Journal/YYYY-WW.md and regenerates STATE.md with weekly view. Run at end of week.
+---
+
 # Skill: Revisión semanal (/review-week)
 
 ## Qué leer primero

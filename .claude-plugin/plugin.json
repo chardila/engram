@@ -1,14 +1,13 @@
 {
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "engram",
   "version": "1.0.0",
   "description": "Personal memory system: Obsidian vault + Claude skills",
+  "author": {
+    "name": "Carlos Ardila",
+    "email": "carlos@ardila.com.co"
+  },
   "skills": [
-    { "name": "daily-prep", "path": "skills/daily-prep.md" },
-    { "name": "end-day", "path": "skills/end-day.md" },
-    { "name": "process-inbox", "path": "skills/process-inbox.md" },
-    { "name": "review-week", "path": "skills/review-week.md" },
-    { "name": "analyze-vault", "path": "skills/analyze-vault.md" },
-    { "name": "review-system", "path": "skills/review-system.md" }
-  ],
-  "claudeMd": "CLAUDE.md"
+    "./plugin/skills"
+  ]
 }

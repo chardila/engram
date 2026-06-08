@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 GITHUB_USER="${1:?Uso: setup.sh <tu-usuario-github> <nombre-vault> [ruta-vault]}"
 VAULT_NAME="${2:?Uso: setup.sh <tu-usuario-github> <nombre-vault> [ruta-vault]}"
 VAULT_PATH="${3:-$HOME/vault/$VAULT_NAME}"
@@ -147,8 +148,17 @@ echo ""
 
 # 1. Plugin de Claude Code
 echo "→ Instalando plugin engram en Claude Code..."
-claude plugin install "$ENGRAM_REPO"
-echo "  ✓ Plugin instalado"
+PLUGIN_DEST="$HOME/.claude/skills/engram"
+if [[ -d "$PLUGIN_DEST" ]]; then
+  echo "  Plugin ya instalado — actualizando skills..."
+  cp "$SCRIPT_DIR/plugin/skills/"*.md "$PLUGIN_DEST/skills/" 2>/dev/null || true
+else
+  mkdir -p "$PLUGIN_DEST/skills"
+  cp "$SCRIPT_DIR/plugin/skills/"*.md "$PLUGIN_DEST/skills/"
+  cp -r "$SCRIPT_DIR/.claude-plugin" "$PLUGIN_DEST/"
+fi
+echo "  ✓ Plugin instalado en: $PLUGIN_DEST"
+echo "  (disponible la próxima sesión de Claude Code)"
 
 # 2. Obsidian
 if obsidian_installed; then
@@ -163,7 +173,6 @@ if git ls-remote --heads "$BRAIN_REPO" 2>/dev/null | grep -q .; then
   git clone "$BRAIN_REPO" "$VAULT_PATH"
 else
   echo "→ Creando vault nuevo desde vault-template..."
-  SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
   cp -r "$SCRIPT_DIR/vault-template/." "$VAULT_PATH"
   # Skills: fuente de verdad es plugin/skills/
   cp "$SCRIPT_DIR/plugin/skills/"*.md "$VAULT_PATH/Skills/"

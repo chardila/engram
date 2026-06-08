@@ -1,3 +1,8 @@
+---
+name: end-day
+description: Use when ending the day, running /end-day, or asked to close the session or wrap up. User writes first (2-4 sentences), Claude adds context, writes AI/sessions/ log, regenerates STATE.md.
+---
+
 # Skill: Revisión diaria — cierre de sesión (/end-day)
 
 ## Qué leer primero

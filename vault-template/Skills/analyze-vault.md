@@ -1,3 +1,8 @@
+---
+name: analyze-vault
+description: Use when running /analyze-vault or asked for a vault audit, health check, or to find orphan notes. Detects orphan projects, stale areas, disconnected resources, and recurring weak signals. Run monthly.
+---
+
 # Skill: Análisis topológico del vault (/analyze-vault)
 
 Detecta degradación estructural: proyectos aislados, áreas descuidadas, recursos sin acción,

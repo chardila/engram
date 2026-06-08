@@ -1,3 +1,8 @@
+---
+name: review-system
+description: Use when running /review-system or asked to improve, review, or audit the vault system itself. Analyzes one month of session logs for friction and patterns, proposes concrete changes to skills and CLAUDE.md. Run first day of each month.
+---
+
 # Skill: Revisión y mejora continua del sistema (/review-system)
 
 Analiza un mes de uso del vault para detectar fricciones, patrones de abandono y oportunidades

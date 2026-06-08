@@ -1,3 +1,8 @@
+---
+name: process-inbox
+description: Use when running /process-inbox, or asked to process, organize, classify, or sort inbox items. Converts Loops abiertos into structured notes in Projects/, Areas/, or Resources/ with proper frontmatter and Tasks syntax.
+---
+
 # Skill: Procesar inbox (/process-inbox)
 
 ## Qué leer primero
