@@ -31,32 +31,29 @@ install_obsidian() {
   echo "→ Instalando Obsidian..."
   if [[ "$OSTYPE" == "darwin"* ]]; then
     if command -v brew &>/dev/null; then
-      brew install --cask obsidian && echo "  ✓ Obsidian instalado via Homebrew" && return 0
+      brew install --cask obsidian && echo "  ✓ Obsidian instalado via Homebrew (auto-updates)" && return 0
     fi
     echo "  ⚠ Homebrew no encontrado — instala Obsidian manualmente: https://obsidian.md/download"
     return 0
   fi
 
-  # Linux: brew → flatpak → snap (si hay sudo) → AppImage
-  if command -v brew &>/dev/null; then
-    brew install --cask obsidian && echo "  ✓ Obsidian instalado via Homebrew" && return 0
+  # Linux: snap (auto-updates) → flatpak → AppImage
+  if command -v snap &>/dev/null; then
+    echo "  → Instalando via snap (requiere sudo, auto-updates activados)..."
+    sudo snap install obsidian --classic && echo "  ✓ Obsidian instalado via snap (auto-updates)" && return 0
   fi
 
   if command -v flatpak &>/dev/null; then
-    flatpak install -y flathub md.obsidian.Obsidian && echo "  ✓ Obsidian instalado via flatpak" && return 0
+    flatpak install -y flathub md.obsidian.Obsidian && echo "  ✓ Obsidian instalado via flatpak (auto-updates)" && return 0
   fi
 
-  if command -v snap &>/dev/null && sudo -n snap install obsidian --classic 2>/dev/null; then
-    echo "  ✓ Obsidian instalado via snap" && return 0
-  fi
-
-  # AppImage (no requiere sudo)
-  echo "  → Descargando AppImage..."
+  # AppImage como último recurso (sin auto-updates)
+  echo "  → Descargando AppImage (sin auto-updates)..."
   local version
   version=$(curl -sf "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest" \
     | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))" 2>/dev/null || echo "")
   if [[ -z "$version" ]]; then
-    echo "  ⚠ No se pudo obtener la versión de Obsidian — instala manualmente: https://obsidian.md/download"
+    echo "  ⚠ No se pudo obtener la versión — instala manualmente: https://obsidian.md/download"
     return 0
   fi
   local appimage="$HOME/.local/bin/obsidian.AppImage"
@@ -65,7 +62,21 @@ install_obsidian() {
     "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/Obsidian-${version}.AppImage" \
     -o "$appimage"
   chmod +x "$appimage"
+  # Create .desktop entry for AppImage
+  mkdir -p "$HOME/.local/share/applications"
+  cat > "$HOME/.local/share/applications/obsidian.desktop" <<DESKTOP
+[Desktop Entry]
+Name=Obsidian
+Exec=$appimage --no-sandbox %U
+Icon=obsidian
+Terminal=false
+Type=Application
+Categories=Office;Notes;
+MimeType=x-scheme-handler/obsidian;
+DESKTOP
+  update-desktop-database "$HOME/.local/share/applications/" 2>/dev/null || true
   echo "  ✓ Obsidian AppImage instalado en: $appimage"
+  echo "  ⚠ Sin auto-updates — ejecuta setup.sh de nuevo para actualizar"
 }
 
 download_plugin() {
