@@ -6,8 +6,5 @@
   "author": {
     "name": "Carlos Ardila",
     "email": "carlos@ardila.com.co"
-  },
-  "skills": [
-    "./plugin/skills"
-  ]
+  }
 }

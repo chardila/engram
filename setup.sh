@@ -187,14 +187,9 @@ echo ""
 # 1. Plugin de Claude Code
 echo "→ Instalando plugin engram en Claude Code..."
 PLUGIN_DEST="$HOME/.claude/skills/engram"
-if [[ -d "$PLUGIN_DEST" ]]; then
-  echo "  Plugin ya instalado — actualizando skills..."
-  cp "$SCRIPT_DIR/plugin/skills/"*.md "$PLUGIN_DEST/skills/" 2>/dev/null || true
-else
-  mkdir -p "$PLUGIN_DEST/skills"
-  cp "$SCRIPT_DIR/plugin/skills/"*.md "$PLUGIN_DEST/skills/"
-  cp -r "$SCRIPT_DIR/.claude-plugin" "$PLUGIN_DEST/"
-fi
+mkdir -p "$PLUGIN_DEST"
+cp -r "$SCRIPT_DIR/.claude-plugin" "$PLUGIN_DEST/"
+cp -r "$SCRIPT_DIR/skills/." "$PLUGIN_DEST/skills/"
 echo "  ✓ Plugin instalado en: $PLUGIN_DEST"
 echo "  (disponible la próxima sesión de Claude Code)"
 
@@ -213,8 +208,11 @@ else
   echo "→ Creando vault nuevo desde vault-template..."
   mkdir -p "$VAULT_PATH"
   cp -r "$SCRIPT_DIR/vault-template/." "$VAULT_PATH"
-  # Skills: fuente de verdad es plugin/skills/
-  cp "$SCRIPT_DIR/plugin/skills/"*.md "$VAULT_PATH/Skills/"
+  # Skills: copia como .md planos para lectura en Obsidian
+  for skill_dir in "$SCRIPT_DIR/skills"/*/; do
+    skill_name="$(basename "$skill_dir")"
+    cp "$skill_dir/SKILL.md" "$VAULT_PATH/Skills/$skill_name.md"
+  done
   cd "$VAULT_PATH"
   git init
   git remote add origin "$BRAIN_REPO"
