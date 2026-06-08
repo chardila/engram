@@ -13,7 +13,7 @@ Sistema de memoria personal: vault de Obsidian + skills para Claude Code.
 ## Instalación rápida
 
 ```bash
-git clone git@github.com:<tu-usuario>/engram.git
+git clone https://github.com/<tu-usuario>/engram.git
 cd engram
 ./setup.sh <tu-usuario-github> brain-work ~/vault/brain-work
 ./setup.sh <tu-usuario-github> brain-personal ~/vault/brain-personal

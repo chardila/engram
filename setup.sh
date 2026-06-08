@@ -4,8 +4,8 @@ set -e
 GITHUB_USER="${1:?Uso: setup.sh <tu-usuario-github> <nombre-vault> [ruta-vault]}"
 VAULT_NAME="${2:?Uso: setup.sh <tu-usuario-github> <nombre-vault> [ruta-vault]}"
 VAULT_PATH="${3:-$HOME/vault/$VAULT_NAME}"
-ENGRAM_REPO="git@github.com:$GITHUB_USER/engram.git"
-BRAIN_REPO="git@github.com:$GITHUB_USER/$VAULT_NAME.git"
+ENGRAM_REPO="https://github.com/$GITHUB_USER/engram.git"
+BRAIN_REPO="https://github.com/$GITHUB_USER/$VAULT_NAME.git"
 
 echo "=== engram setup: $VAULT_NAME ==="
 
