@@ -38,7 +38,11 @@ install_obsidian() {
     return 0
   fi
 
-  # Linux: flatpak → snap (si hay sudo) → AppImage
+  # Linux: brew → flatpak → snap (si hay sudo) → AppImage
+  if command -v brew &>/dev/null; then
+    brew install --cask obsidian && echo "  ✓ Obsidian instalado via Homebrew" && return 0
+  fi
+
   if command -v flatpak &>/dev/null; then
     flatpak install -y flathub md.obsidian.Obsidian && echo "  ✓ Obsidian instalado via flatpak" && return 0
   fi
