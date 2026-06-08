@@ -14,7 +14,7 @@ PLUGINS=(
   "obsidian-tasks-plugin:obsidian-tasks-group/obsidian-tasks"
   "dataview:blacksmithgu/obsidian-dataview"
   "periodic-notes:liamcain/obsidian-periodic-notes"
-  "templater-obsidian:SilentVoid13/Templater"
+  "templater-obsidian:SilentVoid13/Templater@2.20.5"
   "quickadd:chhoumann/quickadd"
   "calendar:liamcain/obsidian-calendar-plugin"
 )
@@ -71,12 +71,24 @@ install_obsidian() {
 
 download_plugin() {
   local plugin_id="$1"
-  local gh_repo="$2"
+  local gh_repo_raw="$2"
+  # Support repo@version pinning (e.g. SilentVoid13/Templater@2.20.5)
+  local gh_repo="${gh_repo_raw%%@*}"
+  local pinned_tag="${gh_repo_raw#*@}"
+  [[ "$pinned_tag" == "$gh_repo_raw" ]] && pinned_tag=""
+
   local plugin_dir="$VAULT_PATH/.obsidian/plugins/$plugin_id"
   mkdir -p "$plugin_dir"
 
+  local release_endpoint
+  if [[ -n "$pinned_tag" ]]; then
+    release_endpoint="https://api.github.com/repos/$gh_repo/releases/tags/$pinned_tag"
+  else
+    release_endpoint="https://api.github.com/repos/$gh_repo/releases/latest"
+  fi
+
   local urls
-  urls=$(curl -sf "https://api.github.com/repos/$gh_repo/releases/latest" | python3 -c "
+  urls=$(curl -sf "$release_endpoint" | python3 -c "
 import sys, json
 data = json.load(sys.stdin)
 for a in data.get('assets', []):
