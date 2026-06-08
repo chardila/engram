@@ -201,7 +201,9 @@ else
 fi
 
 # 3. Vault
-if git ls-remote --heads "$BRAIN_REPO" 2>/dev/null | grep -q .; then
+if [[ -d "$VAULT_PATH/.git" ]]; then
+  echo "→ Vault ya existe en: $VAULT_PATH — omitiendo."
+elif git ls-remote --heads "$BRAIN_REPO" 2>/dev/null | grep -q .; then
   echo "→ Clonando vault existente: $VAULT_NAME..."
   git clone "$BRAIN_REPO" "$VAULT_PATH"
 else
