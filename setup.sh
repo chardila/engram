@@ -13,8 +13,7 @@ PLUGINS=(
   "obsidian-git:Vinzent03/obsidian-git"
   "obsidian-tasks-plugin:obsidian-tasks-group/obsidian-tasks"
   "dataview:blacksmithgu/obsidian-dataview"
-  "periodic-notes:liamcain/obsidian-periodic-notes"
-  "templater-obsidian:SilentVoid13/Templater@2.20.5"
+"templater-obsidian:SilentVoid13/Templater@2.20.5"
   "quickadd:chhoumann/quickadd"
   "calendar:liamcain/obsidian-calendar-plugin"
 )
