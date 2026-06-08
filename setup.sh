@@ -32,32 +32,37 @@ install_obsidian() {
   echo "→ Instalando Obsidian..."
   if [[ "$OSTYPE" == "darwin"* ]]; then
     if command -v brew &>/dev/null; then
-      brew install --cask obsidian
-    else
-      echo "  ⚠ Homebrew no encontrado."
-      echo "  Instala Obsidian manualmente: https://obsidian.md/download"
-      return 0
+      brew install --cask obsidian && echo "  ✓ Obsidian instalado via Homebrew" && return 0
     fi
-  else
-    if command -v flatpak &>/dev/null; then
-      flatpak install -y flathub md.obsidian.Obsidian
-    elif command -v snap &>/dev/null; then
-      sudo snap install obsidian --classic
-    else
-      echo "  → Descargando AppImage..."
-      local version
-      version=$(curl -sf "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest" \
-        | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))")
-      local appimage="$HOME/.local/bin/obsidian.AppImage"
-      mkdir -p "$HOME/.local/bin"
-      curl -fL# \
-        "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/Obsidian-${version}.AppImage" \
-        -o "$appimage"
-      chmod +x "$appimage"
-      echo "  Obsidian AppImage instalado en: $appimage"
-    fi
+    echo "  ⚠ Homebrew no encontrado — instala Obsidian manualmente: https://obsidian.md/download"
+    return 0
   fi
-  echo "  ✓ Obsidian instalado"
+
+  # Linux: flatpak → snap (si hay sudo) → AppImage
+  if command -v flatpak &>/dev/null; then
+    flatpak install -y flathub md.obsidian.Obsidian && echo "  ✓ Obsidian instalado via flatpak" && return 0
+  fi
+
+  if command -v snap &>/dev/null && sudo -n snap install obsidian --classic 2>/dev/null; then
+    echo "  ✓ Obsidian instalado via snap" && return 0
+  fi
+
+  # AppImage (no requiere sudo)
+  echo "  → Descargando AppImage..."
+  local version
+  version=$(curl -sf "https://api.github.com/repos/obsidianmd/obsidian-releases/releases/latest" \
+    | python3 -c "import sys,json; print(json.load(sys.stdin)['tag_name'].lstrip('v'))" 2>/dev/null || echo "")
+  if [[ -z "$version" ]]; then
+    echo "  ⚠ No se pudo obtener la versión de Obsidian — instala manualmente: https://obsidian.md/download"
+    return 0
+  fi
+  local appimage="$HOME/.local/bin/obsidian.AppImage"
+  mkdir -p "$HOME/.local/bin"
+  curl -fL# \
+    "https://github.com/obsidianmd/obsidian-releases/releases/latest/download/Obsidian-${version}.AppImage" \
+    -o "$appimage"
+  chmod +x "$appimage"
+  echo "  ✓ Obsidian AppImage instalado en: $appimage"
 }
 
 download_plugin() {
@@ -173,6 +178,7 @@ if git ls-remote --heads "$BRAIN_REPO" 2>/dev/null | grep -q .; then
   git clone "$BRAIN_REPO" "$VAULT_PATH"
 else
   echo "→ Creando vault nuevo desde vault-template..."
+  mkdir -p "$VAULT_PATH"
   cp -r "$SCRIPT_DIR/vault-template/." "$VAULT_PATH"
   # Skills: fuente de verdad es plugin/skills/
   cp "$SCRIPT_DIR/plugin/skills/"*.md "$VAULT_PATH/Skills/"
