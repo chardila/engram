@@ -211,33 +211,22 @@ done
 echo "→ Registrando vault en Obsidian..."
 register_vault "$VAULT_PATH"
 
-# 6. MCP snippet
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  MCP_CONFIG="$HOME/Library/Application Support/Claude/claude_desktop_config.json"
+# 6. MCP server
+VAULT_ABS="$(realpath "$VAULT_PATH")"
+echo "→ Configurando MCP server para Claude Code..."
+if claude mcp add "$VAULT_NAME" -s user -- npx -y @modelcontextprotocol/server-filesystem "$VAULT_ABS" 2>/dev/null; then
+  echo "  ✓ MCP server '$VAULT_NAME' registrado"
 else
-  MCP_CONFIG="$HOME/.claude/settings.json"
+  echo "  ⚠ claude mcp add falló — agrega manualmente a Claude Desktop:"
+  echo "    \"$VAULT_NAME\": { \"command\": \"npx\", \"args\": [\"-y\", \"@modelcontextprotocol/server-filesystem\", \"$VAULT_ABS\"] }"
 fi
 
-VAULT_ABS="$(realpath "$VAULT_PATH")"
-
-echo ""
-echo "─────────────────────────────────────────────"
-echo " Paso manual: agrega a $MCP_CONFIG"
-echo "─────────────────────────────────────────────"
-cat <<MCONF
-  "$VAULT_NAME": {
-    "command": "npx",
-    "args": ["-y", "@modelcontextprotocol/server-filesystem", "$VAULT_ABS"]
-  }
-MCONF
-echo "─────────────────────────────────────────────"
 echo ""
 echo "=== Listo ==="
 echo "Vault:   $VAULT_ABS"
 echo ""
 echo "Próximos pasos:"
-echo "  1. Pega el snippet MCP en: $MCP_CONFIG"
-echo "  2. Abre Obsidian — el vault ya está registrado"
-echo "  3. Settings → Community plugins → Enable plugins  (un click)"
-echo "  4. En Claude Code: /daily-prep"
+echo "  1. Abre Obsidian — el vault ya está registrado"
+echo "  2. Settings → Community plugins → Enable plugins  (un click)"
+echo "  3. En Claude Code: /daily-prep"
 echo ""
