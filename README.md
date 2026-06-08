@@ -19,10 +19,15 @@ cd engram
 ./setup.sh <tu-usuario-github> brain-personal ~/vault/brain-personal
 ```
 
-El script:
+El script hace todo automáticamente:
 1. Instala el plugin engram en Claude Code
-2. Clona el vault existente o crea uno nuevo desde `vault-template/`
-3. Imprime la configuración MCP para agregar manualmente
+2. Instala Obsidian (flatpak/snap en Linux, Homebrew en Mac)
+3. Crea el vault desde `vault-template/` o clona uno existente
+4. Descarga los 7 plugins de comunidad de Obsidian
+5. Registra el vault en Obsidian (visible al abrir la app)
+6. Imprime el snippet MCP para pegar manualmente (único paso manual)
+
+**Único paso manual:** pegar el snippet MCP en la config de Claude y hacer click en "Enable plugins" la primera vez que abras Obsidian.
 
 ## Configuración MCP
 

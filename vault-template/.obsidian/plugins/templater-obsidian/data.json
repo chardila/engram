@@ -1,0 +1,6 @@
+{
+  "template_folder": "Templates",
+  "auto_jump_to_cursor": false,
+  "trigger_on_file_creation": true,
+  "enabled_templates_hotkeys": []
+}

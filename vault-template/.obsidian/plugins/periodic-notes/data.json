@@ -1,0 +1,17 @@
+{
+  "daily": {
+    "enabled": true,
+    "format": "YYYY-MM-DD",
+    "folder": "Inbox",
+    "template": "Templates/daily"
+  },
+  "weekly": {
+    "enabled": true,
+    "format": "YYYY-WW",
+    "folder": "Journal",
+    "template": ""
+  },
+  "monthly": {
+    "enabled": false
+  }
+}
