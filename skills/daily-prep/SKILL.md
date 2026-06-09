@@ -13,6 +13,8 @@ description: Use when starting the day, running /daily-prep, or asked to plan th
 4. `Inbox/YYYY-MM-DD.md` de hoy si existe
 
 ## Qué hacer
+
+### Si la nota de hoy NO existe o existe sin prioridades
 - Crear `Inbox/YYYY-MM-DD.md` desde `Templates/daily.md` si no existe
 - Generar borrador de `## Prioridades del día` (3–5 puntos) derivado de:
   - Tareas con 📅 de hoy o vencidas en `Projects/`
@@ -20,9 +22,12 @@ description: Use when starting the day, running /daily-prep, or asked to plan th
   - Metas activas en `Context/`
   - `## Hechos duros` como restricción prioritaria sobre todo lo anterior
 - Presentar borrador y preguntar: "¿Ajusto algo?"
+- Escribir prioridades en la nota tras aprobación
 
-## Qué actualizar
-- `## Prioridades del día` en la nota diaria (tras aprobación del usuario)
+### Si la nota de hoy YA existe con prioridades
+- Mostrar las prioridades actuales tal como están (sin regenerar)
+- Preguntar: "¿Ajusto algo?"
+- Solo modificar si el usuario pide cambios explícitos
 
 ## Notas
 - No generar nada antes de mostrar `## Hechos duros`
