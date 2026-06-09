@@ -19,8 +19,9 @@ Si WebFetch falla (URL inaccesible, paywall, error de red), informa al usuario y
 ~~~markdown
 ---
 created: YYYY-MM-DD
-tags: [referencias, <tema>]
+tags: [referencias, estudio]
 status: active
+related: []
 author: claude
 source: <url>
 ---
@@ -53,7 +54,17 @@ No continuar hasta recibir respuesta.
 Para cada concepto de la lista aprobada:
 
 **4a. Crear o actualizar Resources/concepts/<concepto>.md**
-- Si no existe: crear con frontmatter + estas secciones:
+- Si no existe: crear con este frontmatter + estas secciones:
+  ```yaml
+  ---
+  created: YYYY-MM-DD
+  tags: [estudio]
+  status: active
+  related: []
+  author: claude
+  ---
+  ```
+  Secciones:
   - `## ¿Qué es?`
   - `## ¿Por qué importa?`
   - `## Cómo se relaciona con mi trabajo`
@@ -87,6 +98,7 @@ Si `Sources/index.md` no existe en el vault, crearlo con este contenido antes de
 created: YYYY-MM-DD
 tags: [referencias]
 status: active
+related: []
 author: claude
 ---
 
@@ -110,6 +122,7 @@ Si `Sources/log.md` no existe en el vault, crearlo con este contenido antes de a
 created: YYYY-MM-DD
 tags: [referencias]
 status: active
+related: []
 author: claude
 ---
 
