@@ -16,7 +16,6 @@ Sistema de memoria personal: vault de Obsidian + skills para Claude Code.
 ```bash
 git clone https://github.com/<tu-usuario>/engram.git
 cd engram
-./setup.sh <tu-usuario-github> brain-work ~/vault/brain-work
 ./setup.sh <tu-usuario-github> brain-personal ~/vault/brain-personal
 ```
 
@@ -111,5 +110,4 @@ El script sobreescribe `~/.claude/skills/engram/` con los skills actualizados.
 ## Repos relacionados
 
 - `engram` (este repo) — plugin + template, público
-- `brain-work` — vault de trabajo, privado
 - `brain-personal` — vault personal, privado

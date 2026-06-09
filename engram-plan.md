@@ -13,9 +13,9 @@ El plugin es genérico — se instala una vez por máquina. Los vaults son insta
 **Objetivo declarado:** optimizar comprensión, no throughput. El vault existe para construir pensamiento propio y registrar lo que se decidió y por qué — no para recuperar información eficientemente. Esta distinción define cuándo Claude genera y cuándo el usuario escribe primero.
 
 **División clara de responsabilidades:**
-- Todo — notas personales, estudio, tareas de desarrollo y tareas personales → **Obsidian vault** (instancia `brain-personal` o `brain-work` según el contexto)
-- Claude como interfaz unificada via un MCP server
-- Una sesión opera sobre un solo vault — los contextos de trabajo y personal son completamente aislados
+- Todo — notas personales, estudio, tareas de desarrollo y tareas personales → **Obsidian vault** (`brain-personal`)
+- Claude como interfaz unificada via MCP
+- Una sesión opera sobre un solo vault
 
 ```
 GitHub (fuente de verdad)
@@ -24,18 +24,14 @@ GitHub (fuente de verdad)
 │   ├── skills/                      ← skills de Claude Code (fuente de verdad)
 │   ├── vault-template/              ← estructura del vault con ejemplos ficticios
 │   └── setup.sh                     ← instala plugin, clona vault, configura MCP
-├── Repo privado "brain-work"        ← vault instancia trabajo
-└── Repo privado "brain-personal"    ← vault instancia personal
+└── Repo privado "brain-personal"    ← vault personal
 
 Obsidian app (Mac + Linux)
-├── Vault trabajo   → Obsidian Git → auto-sync a brain-work cada 5 min
-└── Vault personal  → Obsidian Git → auto-sync a brain-personal cada 5 min
+└── Vault personal → Obsidian Git → auto-sync a brain-personal cada 5 min
 
 Claude Desktop (Mac) + Claude Code (Linux)
 ├── Plugin engram → provee skills (/daily-prep, /end-day, /process-inbox, /review-week)
-├── MCP "brain-work"     → Local REST API with MCP (obsidian-local-rest-api, HTTP :27123)
 └── MCP "brain-personal" → Local REST API with MCP (obsidian-local-rest-api, HTTP :27123)
-    (cada sesión usa uno solo — completamente aislados)
 ```
 
 ---
@@ -184,21 +180,16 @@ echo "Vault: $VAULT_NAME en $VAULT_PATH"
 
 Crear un repo privado por cada instancia. Ejemplos de nombres:
 
-| Instancia | Repo sugerido |
-|-----------|--------------|
-| Trabajo   | `brain-work` |
-| Personal  | `brain-personal` |
+El nombre del vault es el parámetro `<nombre-vault>` de `setup.sh` — también se usa como nombre del MCP.
 
-Para cada uno:
 1. Ir a https://github.com/new
-2. Nombre: `brain-work` o `brain-personal`
+2. Nombre: `brain-personal` (u otro nombre descriptivo)
 3. Visibilidad: **Private**
 4. Sin README, sin .gitignore
 5. Crear repositorio
 
-Luego ejecutar `setup.sh` una vez por instancia:
+Ejecutar `setup.sh`:
 ```bash
-./setup.sh <tu-usuario-github> brain-work ~/vault/brain-work
 ./setup.sh <tu-usuario-github> brain-personal ~/vault/brain-personal
 ```
 
@@ -673,7 +664,7 @@ Settings → Obsidian Git:
 - **Vault backup interval:** `5` (minutos)
 - **Auto pull interval:** `5` (minutos)
 - **Commit message:** `vault backup: {{date}}`
-- **Remote:** `origin` → apuntando al repo de la instancia (`brain-work` o `brain-personal`)
+- **Remote:** `origin` → apuntando al repo del vault (`brain-personal`)
 
 > `setup.sh` hace esto automáticamente al crear el vault.
 
@@ -694,14 +685,7 @@ El MCP usa el plugin **Local REST API with MCP** (`obsidian-local-rest-api` v4.1
 4. Registra el MCP con `claude mcp add` (aplica igual en Mac y Linux):
 
 ```bash
-# Para brain-personal:
 claude mcp add brain-personal -s user \
-  --type http \
-  --header "Authorization: Bearer <API_KEY>" \
-  "http://127.0.0.1:27123/mcp"
-
-# Para brain-work (mismo proceso, Obsidian debe tener ese vault abierto):
-claude mcp add brain-work -s user \
   --type http \
   --header "Authorization: Bearer <API_KEY>" \
   "http://127.0.0.1:27123/mcp"
@@ -724,20 +708,20 @@ claude mcp list
 
 ## Paso 8: Verificar que Todo Funciona
 
-### Verificación de sync (por cada vault)
+### Verificación de sync
 
 ```bash
-cd ~/vault/brain-work
+cd ~/vault/brain-personal
 git remote -v
 git log --oneline -5
 ```
 
 ### Verificación del MCP
 
-En una sesión de Claude Code, probar con cada instancia:
-- "sesión de trabajo — ¿qué tengo en el inbox de hoy?" → Claude debe leer `brain-work/Inbox/YYYY-MM-DD.md`
-- "sesión personal — agrega una tarea al inbox: llamar al banco" → debe editar `brain-personal/Inbox/YYYY-MM-DD.md`
-- "¿Qué tareas de desarrollo tengo activas?" → debe leer `brain-work/Projects/dev/`
+En una sesión de Claude Code:
+- "ejecuta /daily-prep" → Claude debe leer `brain-personal/Inbox/YYYY-MM-DD.md`
+- "agrega una tarea al inbox: llamar al banco" → debe editar `brain-personal/Inbox/YYYY-MM-DD.md`
+- "¿Qué tareas de desarrollo tengo activas?" → debe leer `brain-personal/Projects/dev/`
 
 ---
 
@@ -818,8 +802,8 @@ Si la respuesta a alguna es no, el vault tiene deuda de portabilidad. La soluci�
 
 ## Notas de Implementación
 
-- **Tres repos, responsabilidades separadas:** `engram` (público, plugin + template), `brain-work` (privado, vault trabajo), `brain-personal` (privado, vault personal). `setup.sh` los conecta. No mezclar contenido personal en `engram`.
-- **Instancias aisladas:** cada vault tiene su propio MCP, su propio repo git, y su propio contexto. Claude opera sobre uno solo por sesión. Indicar cuál al inicio: *"sesión de trabajo"* o *"sesión personal"*.
+- **Dos repos:** `engram` (público, plugin + template) y `brain-personal` (privado, vault personal). `setup.sh` los conecta. No mezclar contenido personal en `engram`.
+- El plugin soporta múltiples vaults (ejecutar `setup.sh` una vez por vault), pero en la práctica se usa uno solo: `brain-personal`. Claude opera sobre un vault a la vez — el activo es el que tiene MCP configurado en la sesión.
 - **Skills: fuente de verdad en `skills/*/SKILL.md`**. Los archivos en `vault-template/Skills/` son copias planas para referencia en Obsidian. Si editas un skill, edítalo en `skills/<nombre>/SKILL.md` y re-ejecuta `setup.sh` para propagar los cambios.
 - Las tareas de desarrollo van en `Projects/dev/<repo>.md` con sintaxis Tasks plugin. Los links a PRs/commits se añaden como texto en el body de cada tarea — no hay integración bidireccional automática con GitHub.
 - Claude no tiene memoria nativa entre sesiones — la continuidad viene de STATE.md y los logs en `AI/sessions/`. Ambos son generados automáticamente por Claude al cerrar sesión y aprobados por el usuario: no se escriben a mano.

@@ -6,7 +6,7 @@ aprendizaje, tareas personales y tareas de desarrollo.
 Lee `Context/` para perfil detallado (metas, valores, preferencias).
 
 ## MCP configurado
-El vault se accede via MCP filesystem (servidor: nombre del vault, ej: `brain-work`).
+El vault se accede via MCP Local REST API (servidor: nombre del vault, ej: `brain-personal`).
 Úsalo siempre para leer y escribir notas en el vault.
 Todas las tareas — personales y de desarrollo — se gestionan aquí.
 

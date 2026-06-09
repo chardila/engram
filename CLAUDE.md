@@ -31,6 +31,5 @@ name, and behavioral protocols.
 
 ## Session Start Protocol
 
-1. Identify which vault is active (brain-work or brain-personal)
-2. Read that vault's `CLAUDE.md`
-3. Execute `/daily-prep` or pick up from last session log in `AI/sessions/`
+1. Read the vault's `CLAUDE.md` (the active vault is defined by which MCP server is configured)
+2. Execute `/daily-prep` or pick up from last session log in `AI/sessions/`
