@@ -60,6 +60,7 @@ Si re-ejecutas `setup.sh` después de que el plugin fue inicializado, el paso 4 
 | `/review-week` | Journal semanal + STATE.md con vista de la semana completa |
 | `/analyze-vault` | Auditoría mensual: proyectos huérfanos, áreas descuidadas, señales débiles |
 | `/review-system` | Meta-revisión mensual: patrones de uso, fricciones, mejoras al sistema |
+| `/ingest-url <url>` | Ingesta una URL: crea nota en Sources/, extrae conceptos a Resources/, actualiza MOCs y cross-links |
 
 ## Uso típico
 

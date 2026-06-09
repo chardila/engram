@@ -18,6 +18,7 @@ name, and behavioral protocols.
 | `/review-week` | Generate weekly journal, update STATE.md with weekly view |
 | `/analyze-vault` | Monthly topological audit: orphans, stale areas, weak signals |
 | `/review-system` | Monthly meta-review: usage patterns, friction, system improvements |
+| `/ingest-url <url>` | Ingest a URL: creates note in Sources/, extracts concepts to Resources/, updates MOCs and cross-links |
 
 ## Key Conventions
 
