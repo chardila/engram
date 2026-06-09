@@ -8,8 +8,10 @@ description: Use when running /ingest-url <url> or asked to ingest, save, or pro
 ## Pasos
 
 ### 1. Leer la URL
-Usa WebFetch para leer el contenido completo de la URL.
-Si WebFetch falla (URL inaccesible, paywall, error de red), informa al usuario y detén la ejecución.
+Usa `defuddle parse <url> --md` para extraer el contenido limpio de la URL.
+Si la URL termina en `.md`, usa WebFetch directamente en lugar de defuddle.
+Si defuddle falla, intenta con WebFetch como fallback.
+Si ambos fallan (URL inaccesible, paywall, error de red), informa al usuario y detén la ejecución.
 
 ### 2. Crear Sources/<slug>.md (inmutable)
 - El slug = título del artículo en kebab-case, máximo 60 caracteres, truncar en límite de palabra si el título es largo (ej: `llm-wiki-obsidian-karpathy`)
