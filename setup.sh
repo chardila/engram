@@ -13,9 +13,10 @@ PLUGINS=(
   "obsidian-git:Vinzent03/obsidian-git"
   "obsidian-tasks-plugin:obsidian-tasks-group/obsidian-tasks"
   "dataview:blacksmithgu/obsidian-dataview"
-"templater-obsidian:SilentVoid13/Templater@2.20.5"
+  "templater-obsidian:SilentVoid13/Templater@2.20.5"
   "quickadd:chhoumann/quickadd"
   "calendar:liamcain/obsidian-calendar-plugin"
+  "obsidian-local-rest-api:coddingtonbear/obsidian-local-rest-api"
 )
 
 # ── helpers ───────────────────────────────────────────────────────────────────
@@ -240,14 +241,33 @@ done
 echo "→ Registrando vault en Obsidian..."
 register_vault "$VAULT_PATH"
 
-# 6. MCP server
+# 6. MCP server — via obsidian-local-rest-api (HTTP, puerto 27123)
+# El plugin genera un API key al primer inicio de Obsidian. Si ya existe, lo leemos
+# y registramos el MCP automáticamente. Si no, imprimimos instrucciones manuales.
 VAULT_ABS="$(realpath "$VAULT_PATH")"
+REST_API_CONFIG="$VAULT_ABS/.obsidian/plugins/obsidian-local-rest-api/data.json"
 echo "→ Configurando MCP server para Claude Code..."
-if claude mcp add "$VAULT_NAME" -s user -- npx -y @modelcontextprotocol/server-filesystem "$VAULT_ABS" 2>/dev/null; then
-  echo "  ✓ MCP server '$VAULT_NAME' registrado"
+if [[ -f "$REST_API_CONFIG" ]]; then
+  API_KEY=$(python3 -c "import json; print(json.load(open('$REST_API_CONFIG'))['apiKey'])" 2>/dev/null || echo "")
+fi
+if [[ -n "${API_KEY:-}" ]]; then
+  if claude mcp add "$VAULT_NAME" -s user \
+      --type http \
+      --header "Authorization: Bearer $API_KEY" \
+      "http://127.0.0.1:27123/mcp" 2>/dev/null; then
+    echo "  ✓ MCP server '$VAULT_NAME' registrado (Local REST API)"
+  else
+    echo "  ⚠ claude mcp add falló — agrega manualmente:"
+    echo "    claude mcp add $VAULT_NAME -s user --type http --header \"Authorization: Bearer $API_KEY\" http://127.0.0.1:27123/mcp"
+  fi
 else
-  echo "  ⚠ claude mcp add falló — agrega manualmente a Claude Desktop:"
-  echo "    \"$VAULT_NAME\": { \"command\": \"npx\", \"args\": [\"-y\", \"@modelcontextprotocol/server-filesystem\", \"$VAULT_ABS\"] }"
+  echo "  ⚠ Paso manual requerido (Obsidian no ha iniciado el plugin aún):"
+  echo "    1. Abre Obsidian → Settings → Community plugins → habilita 'Local REST API with MCP'"
+  echo "    2. En el plugin: activa 'Enable Non-encrypted (insecure) Server' (puerto 27123)"
+  echo "    3. Copia el API Key del plugin y ejecuta:"
+  echo "       claude mcp add $VAULT_NAME -s user --type http \\"
+  echo "         --header \"Authorization: Bearer <API_KEY>\" \\"
+  echo "         http://127.0.0.1:27123/mcp"
 fi
 
 echo ""
@@ -257,5 +277,11 @@ echo ""
 echo "Próximos pasos:"
 echo "  1. Abre Obsidian — el vault ya está registrado"
 echo "  2. Settings → Community plugins → Enable plugins  (un click)"
-echo "  3. En Claude Code: /daily-prep"
+if [[ -z "${API_KEY:-}" ]]; then
+  echo "  3. Habilita 'Local REST API with MCP' → activa servidor HTTP (puerto 27123) → copia API Key"
+  echo "  4. Ejecuta: claude mcp add $VAULT_NAME -s user --type http --header \"Authorization: Bearer <API_KEY>\" http://127.0.0.1:27123/mcp"
+  echo "  5. En Claude Code: /daily-prep"
+else
+  echo "  3. En Claude Code: /daily-prep"
+fi
 echo ""
