@@ -6,7 +6,8 @@ Sistema de memoria personal: vault de Obsidian + skills para Claude Code.
 
 ## Qué incluye
 
-- `plugin/` — skills e instrucciones base para Claude Code
+- `.claude-plugin/` — manifiesto del plugin para Claude Code (`plugin.json`)
+- `skills/` — skills de Claude Code (fuente de verdad)
 - `vault-template/` — estructura del vault con plantillas
 - `setup.sh` — instala todo desde cero en una máquina nueva
 
@@ -20,33 +21,35 @@ cd engram
 ```
 
 El script hace todo automáticamente:
-1. Instala el plugin engram en Claude Code
-2. Instala Obsidian (flatpak/snap en Linux, Homebrew en Mac)
+1. Instala el plugin engram en Claude Code (`~/.claude/skills/engram/`)
+2. Instala Obsidian (snap en Linux, Homebrew en Mac)
 3. Crea el vault desde `vault-template/` o clona uno existente
-4. Descarga los 7 plugins de comunidad de Obsidian
+4. Descarga los 8 plugins de comunidad de Obsidian (incluido Local REST API with MCP)
 5. Registra el vault en Obsidian (visible al abrir la app)
-6. Imprime el snippet MCP para pegar manualmente (único paso manual)
-
-**Único paso manual:** pegar el snippet MCP en la config de Claude y hacer click en "Enable plugins" la primera vez que abras Obsidian.
+6. Registra el MCP en Claude Code si el plugin ya fue inicializado, o imprime las instrucciones si no
 
 ## Configuración MCP
 
-Después de ejecutar `setup.sh`, agrega a `~/.claude/settings.json` (Linux) o `~/Library/Application Support/Claude/claude_desktop_config.json` (Mac):
+El MCP usa el plugin **Local REST API with MCP** (`obsidian-local-rest-api` v4.1.3 por Adam Coddington). Es el MCP recomendado para Obsidian: acceso nativo al vault con soporte de búsqueda, metadata y frontmatter.
 
-```json
-{
-  "mcpServers": {
-    "brain-work": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/ruta/vault/brain-work"]
-    },
-    "brain-personal": {
-      "command": "npx",
-      "args": ["-y", "@modelcontextprotocol/server-filesystem", "/ruta/vault/brain-personal"]
-    }
-  }
-}
+**Primera vez (paso manual obligatorio):**
+
+1. Abre Obsidian → `Settings → Community plugins → habilita "Local REST API with MCP"`
+2. En la configuración del plugin: activa **"Enable Non-encrypted (insecure) Server"** (puerto 27123)
+   - El servidor HTTPS (puerto 27124) genera un certificado autofirmado que Claude Code no acepta
+3. Copia el **API Key** que muestra el plugin
+4. Registra el MCP en Claude Code:
+
+```bash
+claude mcp add brain-personal -s user \
+  --type http \
+  --header "Authorization: Bearer <API_KEY>" \
+  "http://127.0.0.1:27123/mcp"
 ```
+
+Si re-ejecutas `setup.sh` después de que el plugin fue inicializado, el paso 4 se hace automáticamente.
+
+**Requisito:** Obsidian debe estar abierto para que el MCP responda.
 
 ## Skills disponibles
 
@@ -75,7 +78,7 @@ tu-vault/
 ├── CLAUDE.md           ← instrucciones para Claude (completar al instalar)
 ├── STATE.md            ← estado actual: generado por Claude, aprobado por ti
 ├── Context/            ← quién eres: metas, valores, preferencias
-├── Skills/             ← copias de plugin/skills/ (actualizar via claude plugin update)
+├── Skills/             ← copias de skills/ del repo (referencia en Obsidian)
 ├── Inbox/              ← nota diaria + capturas rápidas
 ├── Projects/dev/       ← proyectos activos (con links a PRs/commits)
 ├── Areas/              ← responsabilidades continuas
@@ -95,11 +98,15 @@ tu-vault/
 
 ## Actualizar los skills
 
+Re-ejecuta `setup.sh` desde el repo actualizado:
+
 ```bash
-claude plugin update engram
-# Luego copiar skills actualizados al vault:
-cp ~/.claude/plugins/engram/skills/*.md ~/vault/brain-work/Skills/
+cd engram
+git pull
+./setup.sh <tu-usuario-github> brain-personal ~/vault/brain-personal
 ```
+
+El script sobreescribe `~/.claude/skills/engram/` con los skills actualizados.
 
 ## Repos relacionados
 
