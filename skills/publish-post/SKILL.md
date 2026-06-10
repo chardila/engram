@@ -1,6 +1,6 @@
 ---
 name: publish-post
-description: Use when running /publish-post <búsqueda> or asked to publish, convert, or export a vault note to the blog. Searches the vault for the note, adapts content for blog format, generates a cover image via Pollinations.ai, and creates the draft post file in the blog repository.
+description: Use when running /publish-post <búsqueda> or asked to publish, convert, or export a vault note to the blog. Searches the vault for the note, adapts content for blog format, generates a cover image via Cloudflare Workers AI, and creates the draft post file in the blog repository.
 ---
 
 # Skill: Publicar post en el blog (/publish-post <búsqueda>)
@@ -54,7 +54,7 @@ Genera el frontmatter del post con estas reglas:
 - `draft`: siempre `true`
 - `slug` (solo para construir el nombre del archivo, no va en el frontmatter): kebab-case del título, sin fecha
 - Nombre del archivo de salida: `YYYY-MM-DD-{slug}.md`
-- `coverImage.src`: `../../assets/images/YYYY-MM-DD-{slug}.jpg`
+- `coverImage.src`: `../../assets/images/YYYY-MM-DD-{slug}.png`
 - `coverImage.alt`: igual que `title`
 
 Preséntalo en bloque YAML y pregunta:
@@ -69,6 +69,15 @@ Si el usuario pide cambios: aplícalos y muestra el borrador de nuevo.
 
 ### 6. Generar imagen de portada
 
+**Requiere variables de entorno:** `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN`.
+Si alguna no está configurada, informa al usuario y salta directamente a "Si la generación de imagen falla".
+
+**Verificar variables:**
+```bash
+[ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$CLOUDFLARE_API_TOKEN" ] && \
+  { echo "Error: faltan CLOUDFLARE_ACCOUNT_ID o CLOUDFLARE_API_TOKEN"; IMAGEN_FALLIDA=true; }
+```
+
 **Construir el prompt** (en inglés, describe visualmente el tema del post):
 ```
 Minimalist editorial illustration for a blog post titled "[title]".
@@ -76,42 +85,42 @@ Minimalist editorial illustration for a blog post titled "[title]".
 Clean composition, modern style, no text.
 ```
 
-**Descargar la imagen:**
-
-Primero construye el prompt URL-encoded y luego descarga:
+**Generar y descargar la imagen:**
 ```bash
-PROMPT_ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "AQUÍ_VA_EL_PROMPT_CONSTRUIDO")
-curl -L -o /tmp/YYYY-MM-DD-{slug}.jpg \
-  "https://image.pollinations.ai/prompt/${PROMPT_ENCODED}?width=1200&height=630&model=flux&nologo=true"
+curl -X POST "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/bytedance/stable-diffusion-xl-lightning" \
+  -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d "{\"prompt\": \"AQUÍ_VA_EL_PROMPT_CONSTRUIDO\"}" \
+  --output /tmp/YYYY-MM-DD-{slug}.png
 ```
-Donde `AQUÍ_VA_EL_PROMPT_CONSTRUIDO` es el prompt literal que construiste en el paso anterior.
+Donde `AQUÍ_VA_EL_PROMPT_CONSTRUIDO` es el prompt literal que construiste arriba.
 
 **Verificar que la imagen se generó correctamente:**
 Inmediatamente después del curl, verifica que el archivo existe y no está vacío:
 ```bash
-[ -s /tmp/YYYY-MM-DD-{slug}.jpg ] || { echo "Imagen no generada o vacía"; IMAGEN_FALLIDA=true; }
+[ -s /tmp/YYYY-MM-DD-{slug}.png ] || { echo "Imagen no generada o vacía"; IMAGEN_FALLIDA=true; }
 ```
 Si `IMAGEN_FALLIDA=true`, salta a "Si la generación de imagen falla" al final de este paso. De lo contrario, continúa.
 
 **Mover al directorio de imágenes del blog:**
 ```bash
-mv /tmp/YYYY-MM-DD-{slug}.jpg \
-  /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.jpg
+mv /tmp/YYYY-MM-DD-{slug}.png \
+  /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.png
 ```
 
 **Optimizar la imagen** (si falla, continuar con la imagen sin optimizar):
 ```bash
 /home/carlos-ardila/Documents/gitprojects/blogcardila/optimizar.sh \
-  /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.jpg || \
+  /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.png || \
   echo "Advertencia: optimizar.sh falló — se usará la imagen sin optimizar"
 ```
 
 **Borrar el backup si fue creado:**
 ```bash
-rm -f /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.jpg.backup
+rm -f /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.png.backup
 ```
 
-**Si la generación de imagen falla** (curl retorna error, timeout, o archivo vacío):
+**Si la generación de imagen falla** (variables no configuradas, curl retorna error, timeout, o archivo vacío):
 Si `IMAGEN_FALLIDA=true`:
 - Informa al usuario brevemente
 - Escribe el post sin campo `coverImage` en el frontmatter
@@ -133,7 +142,7 @@ publishDate: "YYYY-MM-DD"
 tags: [tag1, tag2]
 draft: true
 coverImage:
-  src: "../../assets/images/YYYY-MM-DD-{slug}.jpg"
+  src: "../../assets/images/YYYY-MM-DD-{slug}.png"
   alt: "Título del post"
 ---
 
