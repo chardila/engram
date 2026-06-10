@@ -78,16 +78,17 @@ Si alguna no está configurada, informa al usuario y salta directamente a "Si la
   { echo "Error: faltan CLOUDFLARE_ACCOUNT_ID o CLOUDFLARE_API_TOKEN"; IMAGEN_FALLIDA=true; }
 ```
 
-**Construir el prompt** (en inglés, describe visualmente el tema del post):
+**Construir el prompt** (en inglés, usando objetos físicos concretos que evoquen el tema):
 ```
-Minimalist editorial illustration for a blog post titled "[title]".
-[1-2 sentences capturing the main theme of the post].
-Clean composition, modern style, no text.
+[1-2 concrete physical objects or a simple scene that suggests the post's theme].
+Soft natural light. Minimalist, editorial style, muted colors, no text.
 ```
+
+Regla crítica: **no uses conceptos abstractos** (graphs, networks, nodes, connections, systems, AI, code) — los modelos los convierten en imágenes sin sentido. En su lugar, elige objetos tangibles: una mesa de trabajo, un cuaderno, una planta, una taza de café, una ventana. El objeto debe evocar el tema, no representarlo literalmente.
 
 **Generar y descargar la imagen:**
 ```bash
-curl -X POST "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/bytedance/stable-diffusion-xl-lightning" \
+curl -X POST "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/stabilityai/stable-diffusion-xl-base-1.0" \
   -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d "{\"prompt\": \"AQUÍ_VA_EL_PROMPT_CONSTRUIDO\"}" \
