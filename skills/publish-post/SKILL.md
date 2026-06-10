@@ -42,7 +42,7 @@ Reglas:
 - Corregir errores de ortografía y gramática
 - Eliminar estructura del vault (frontmatter, secciones "Ideas clave", "Citas relevantes") — convertir a prosa
 - Integrar citas originales como blockquotes `>`
-- Eliminar wikilinks `[[...]]` que se verían extraños en el blog; conservar los que tienen texto natural
+- Eliminar wikilinks `[[nombre-de-archivo]]` cuyo destino es un nombre interno del vault; conservar solo si el alias es una frase legible en prosa (ej: `[[algoritmos|algoritmos de búsqueda]]` → "algoritmos de búsqueda")
 
 ### 4. CP2 — Aprobar frontmatter
 
@@ -52,7 +52,7 @@ Genera el frontmatter del post con estas reglas:
 - `publishDate`: fecha de hoy en formato `YYYY-MM-DD`
 - `tags`: derivados de las tags de la nota original en el vault
 - `draft`: siempre `true`
-- `slug`: kebab-case del título (sin fecha; la fecha va en el nombre del archivo)
+- `slug` (solo para construir el nombre del archivo, no va en el frontmatter): kebab-case del título, sin fecha
 - Nombre del archivo de salida: `YYYY-MM-DD-{slug}.md`
 - `coverImage.src`: `../../assets/images/YYYY-MM-DD-{slug}.jpg`
 - `coverImage.alt`: igual que `title`
@@ -77,10 +77,14 @@ Clean composition, modern style, no text.
 ```
 
 **Descargar la imagen:**
+
+Primero construye el prompt URL-encoded y luego descarga:
 ```bash
+PROMPT_ENCODED=$(python3 -c "import urllib.parse,sys; print(urllib.parse.quote(sys.argv[1]))" "AQUÍ_VA_EL_PROMPT_CONSTRUIDO")
 curl -L -o /tmp/YYYY-MM-DD-{slug}.jpg \
-  "https://image.pollinations.ai/prompt/{prompt_url_encoded}?width=1200&height=630&model=flux&nologo=true"
+  "https://image.pollinations.ai/prompt/${PROMPT_ENCODED}?width=1200&height=630&model=flux&nologo=true"
 ```
+Donde `AQUÍ_VA_EL_PROMPT_CONSTRUIDO` es el prompt literal que construiste en el paso anterior.
 
 **Mover al directorio de imágenes del blog:**
 ```bash
@@ -88,10 +92,11 @@ mv /tmp/YYYY-MM-DD-{slug}.jpg \
   /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.jpg
 ```
 
-**Optimizar la imagen:**
+**Optimizar la imagen** (si falla, continuar con la imagen sin optimizar):
 ```bash
 /home/carlos-ardila/Documents/gitprojects/blogcardila/optimizar.sh \
-  /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.jpg
+  /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.jpg || \
+  echo "Advertencia: optimizar.sh falló — se usará la imagen sin optimizar"
 ```
 
 **Borrar el backup si fue creado:**
@@ -99,7 +104,12 @@ mv /tmp/YYYY-MM-DD-{slug}.jpg \
 rm -f /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/images/YYYY-MM-DD-{slug}.jpg.backup
 ```
 
-**Si la generación de imagen falla** (curl retorna error, timeout, archivo vacío):
+**Si la generación de imagen falla** (curl retorna error, timeout, o archivo vacío):
+Después del curl, verifica que el archivo existe y no está vacío:
+```bash
+[ -s /tmp/YYYY-MM-DD-{slug}.jpg ] || { echo "Imagen no generada o vacía"; IMAGEN_FALLIDA=true; }
+```
+Si `IMAGEN_FALLIDA=true`:
 - Informa al usuario brevemente
 - Escribe el post sin campo `coverImage` en el frontmatter
 - Continúa con el paso 7 sin interrumpir la publicación
