@@ -86,6 +86,13 @@ curl -L -o /tmp/YYYY-MM-DD-{slug}.jpg \
 ```
 Donde `AQUÍ_VA_EL_PROMPT_CONSTRUIDO` es el prompt literal que construiste en el paso anterior.
 
+**Verificar que la imagen se generó correctamente:**
+Inmediatamente después del curl, verifica que el archivo existe y no está vacío:
+```bash
+[ -s /tmp/YYYY-MM-DD-{slug}.jpg ] || { echo "Imagen no generada o vacía"; IMAGEN_FALLIDA=true; }
+```
+Si `IMAGEN_FALLIDA=true`, salta a "Si la generación de imagen falla" al final de este paso. De lo contrario, continúa.
+
 **Mover al directorio de imágenes del blog:**
 ```bash
 mv /tmp/YYYY-MM-DD-{slug}.jpg \
@@ -105,10 +112,6 @@ rm -f /home/carlos-ardila/Documents/gitprojects/blogcardila/blog/src/assets/imag
 ```
 
 **Si la generación de imagen falla** (curl retorna error, timeout, o archivo vacío):
-Después del curl, verifica que el archivo existe y no está vacío:
-```bash
-[ -s /tmp/YYYY-MM-DD-{slug}.jpg ] || { echo "Imagen no generada o vacía"; IMAGEN_FALLIDA=true; }
-```
 Si `IMAGEN_FALLIDA=true`:
 - Informa al usuario brevemente
 - Escribe el post sin campo `coverImage` en el frontmatter
