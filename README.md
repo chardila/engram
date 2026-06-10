@@ -61,6 +61,7 @@ Si re-ejecutas `setup.sh` después de que el plugin fue inicializado, el paso 4 
 | `/analyze-vault` | Auditoría mensual: proyectos huérfanos, áreas descuidadas, señales débiles |
 | `/review-system` | Meta-revisión mensual: patrones de uso, fricciones, mejoras al sistema |
 | `/ingest-url <url>` | Ingesta una URL: crea nota en Sources/, extrae conceptos a Resources/, actualiza MOCs y cross-links |
+| `/publish-post <búsqueda>` | Publica una nota del vault como post en el blog: adapta contenido, genera imagen de portada, escribe draft en el repositorio del blog |
 
 ## Uso típico
 

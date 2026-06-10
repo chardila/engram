@@ -19,6 +19,7 @@ name, and behavioral protocols.
 | `/analyze-vault` | Monthly topological audit: orphans, stale areas, weak signals |
 | `/review-system` | Monthly meta-review: usage patterns, friction, system improvements |
 | `/ingest-url <url>` | Ingest a URL: creates note in Sources/, extracts concepts to Resources/, updates MOCs and cross-links |
+| `/publish-post <búsqueda>` | Publish a vault note as a blog post: adapts content, generates cover image, writes draft to blog repository |
 
 ## Key Conventions
 

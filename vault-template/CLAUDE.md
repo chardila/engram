@@ -12,7 +12,7 @@ Todas las tareas — personales y de desarrollo — se gestionan aquí.
 
 ## Estructura del vault
 - `Context/` — metas anuales/trimestrales, valores, preferencias de trabajo y aprendizaje
-- `Skills/` — instrucciones paso a paso para flujos recurrentes (`/daily-prep`, `/end-day`, `/process-inbox`, `/review-week`, `/analyze-vault`, `/review-system`, `/ingest-url`)
+- `Skills/` — instrucciones paso a paso para flujos recurrentes (`/daily-prep`, `/end-day`, `/process-inbox`, `/review-week`, `/analyze-vault`, `/review-system`, `/ingest-url`, `/publish-post`)
 - `Inbox/YYYY-MM-DD.md` — nota diaria, punto de entrada
 - `Projects/` — proyectos activos (cada uno enlazado a un Area y a `Resources/`)
   - `Projects/dev/` — proyectos de desarrollo; las tareas incluyen links a PRs/commits
