@@ -74,6 +74,7 @@ Si alguna no está configurada, informa al usuario y salta directamente a "Si la
 
 **Verificar variables:**
 ```bash
+source ~/.zshrc
 [ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$CLOUDFLARE_API_TOKEN" ] && \
   { echo "Error: faltan CLOUDFLARE_ACCOUNT_ID o CLOUDFLARE_API_TOKEN"; IMAGEN_FALLIDA=true; }
 ```
