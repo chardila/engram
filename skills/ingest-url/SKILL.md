@@ -55,6 +55,8 @@ No continuar hasta recibir respuesta.
 ### 4. Procesar conceptos aprobados
 Para cada concepto de la lista aprobada:
 
+> **Nota:** Antes de usar `vault_patch` en cualquier archivo existente (concepto, MOC), llama primero a `vault_get_document_map` para obtener los paths exactos de encabezados. El formato requerido es `Título Principal::Subencabezado` (ej: `LLM Wiki::Conceptos relacionados`). Usar solo el nombre del subencabezado falla silenciosamente.
+
 **4a. Crear o actualizar Resources/concepts/<concepto>.md**
 - Si no existe: crear con este frontmatter + estas secciones:
   ```yaml
@@ -64,8 +66,10 @@ Para cada concepto de la lista aprobada:
   status: active
   related: []
   author: claude
+  kind: <concept|comparison|entity|overview>
   ---
   ```
+  Inferir `kind` según el contenido: `concept` (idea o práctica), `comparison` (contrasta dos o más cosas, ej: "X vs Y"), `entity` (persona, empresa, producto concreto), `overview` (síntesis de un área amplia).
   Secciones:
   - `## ¿Qué es?`
   - `## ¿Por qué importa?`
