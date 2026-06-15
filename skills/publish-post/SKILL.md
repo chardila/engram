@@ -41,6 +41,7 @@ Reglas:
 - Preservar la voz del autor — reorganizar y pulir, no reescribir
 - Corregir errores de ortografía y gramática
 - Eliminar estructura del vault (frontmatter, secciones "Ideas clave", "Citas relevantes") — convertir a prosa
+- Conservar secciones de contenido como "## Conceptos", glosarios o definiciones técnicas — son valor editorial, no estructura del vault
 - Integrar citas originales como blockquotes `>`
 - Eliminar wikilinks `[[nombre-de-archivo]]` cuyo destino es un nombre interno del vault; conservar solo si el alias es una frase legible en prosa (ej: `[[algoritmos|algoritmos de búsqueda]]` → "algoritmos de búsqueda")
 
@@ -69,14 +70,14 @@ Si el usuario pide cambios: aplícalos y muestra el borrador de nuevo.
 
 ### 6. Generar imagen de portada
 
-**Requiere variables de entorno:** `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_API_TOKEN`.
+**Requiere variables de entorno:** `CLOUDFLARE_ACCOUNT_ID` y `CLOUDFLARE_AI_TOKEN`.
 Si alguna no está configurada, informa al usuario y salta directamente a "Si la generación de imagen falla".
 
 **Verificar variables:**
 ```bash
 source ~/.zshrc
-[ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$CLOUDFLARE_API_TOKEN" ] && \
-  { echo "Error: faltan CLOUDFLARE_ACCOUNT_ID o CLOUDFLARE_API_TOKEN"; IMAGEN_FALLIDA=true; }
+[ -z "$CLOUDFLARE_ACCOUNT_ID" ] || [ -z "$CLOUDFLARE_AI_TOKEN" ] && \
+  { echo "Error: faltan CLOUDFLARE_ACCOUNT_ID o CLOUDFLARE_AI_TOKEN"; IMAGEN_FALLIDA=true; }
 ```
 
 **Construir el prompt** (en inglés, usando objetos físicos concretos que evoquen el tema):
@@ -90,9 +91,9 @@ Regla crítica: **no uses conceptos abstractos** (graphs, networks, nodes, conne
 **Generar y descargar la imagen:**
 ```bash
 curl -X POST "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/stabilityai/stable-diffusion-xl-base-1.0" \
-  -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+  -H "Authorization: Bearer ${CLOUDFLARE_AI_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "{\"prompt\": \"AQUÍ_VA_EL_PROMPT_CONSTRUIDO\"}" \
+  -d "{\"prompt\": \"AQUÍ_VA_EL_PROMPT_CONSTRUIDO\", \"width\": 1200, \"height\": 630}" \
   --output /tmp/YYYY-MM-DD-{slug}.png
 ```
 Donde `AQUÍ_VA_EL_PROMPT_CONSTRUIDO` es el prompt literal que construiste arriba.
