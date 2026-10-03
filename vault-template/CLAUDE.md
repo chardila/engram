@@ -36,11 +36,10 @@ Todas las tareas — personales y de desarrollo — se gestionan aquí.
 1. Claude pregunta al usuario: "¿Qué aprendiste hoy y qué decidiste?"
    El usuario escribe primero — 2 a 4 oraciones libres, sin estructura.
 2. Claude complementa con contexto técnico inferido de la conversación
-3. El resultado combinado se escribe en `AI/sessions/YYYY-MM-DD-HH.md`
-4. Claude actualiza `## Agent Log` en la nota diaria
-5. Regenera `STATE.md` a partir de `Projects/` — no toca `## Hechos duros`
-6. Presenta `STATE.md` regenerado → "¿Corrijo o apruebo?"
-7. Si hay un patrón repetido que merezca un nuevo skill, lo señala al usuario
+3. Regenera `STATE.md` a partir de `Projects/` — no toca `## Hechos duros`
+4. Presenta `STATE.md` regenerado → "¿Corrijo o apruebo?"
+5. Solo tras aprobación, escribe: el resultado combinado en `AI/sessions/YYYY-MM-DD-HH.md`, `## Agent Log` en la nota diaria y el `STATE.md` aprobado
+6. Si hay un patrón repetido que merezca un nuevo skill, lo señala al usuario
 
 ## Durante el día
 - Capturas rápidas → `## Loops abiertos` de la nota diaria
