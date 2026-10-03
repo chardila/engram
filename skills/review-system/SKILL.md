@@ -14,7 +14,7 @@ Ejecutar: primer día de cada mes, antes del `/analyze-vault` mensual.
 ## Qué leer
 1. `AI/sessions/` — todos los logs del mes anterior
 2. `Inbox/` — notas diarias del mes (sección `## Señales débiles`)
-3. `plugin/skills/*.md` — versión actual de cada skill
+3. `Skills/*.md` — versión actual de cada skill
 4. `CLAUDE.md` — instrucciones actuales
 
 ## Qué detectar
@@ -54,6 +54,6 @@ Para cada propuesta, especificar:
 ## Flujo de aprobación
 1. Presentar informe completo
 2. Para cada propuesta: "¿Aplico este cambio? (sí / no / modificar)"
-3. Solo tras aprobación explícita: editar el archivo en `plugin/skills/` o `CLAUDE.md`
+3. Solo tras aprobación explícita: editar el archivo en `Skills/` o `CLAUDE.md`
 4. Registrar cambios aprobados en `AI/sessions/YYYY-MM-DD-review-system.md`
    con `author: user` en las decisiones del usuario y `author: claude` en el diagnóstico
